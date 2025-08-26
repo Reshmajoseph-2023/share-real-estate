@@ -1,28 +1,38 @@
-import multer from 'multer';
-import path from 'path';
 
-// Define storage strategy
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Make sure this folder exists
-  },
-  filename: function (req, file, cb) {
-    const uniqueName = Date.now() + '-' + file.originalname;
-    cb(null, uniqueName);
+import cors from "cors";
+import express from "express";
+import cookieParser from "cookie-parser";
+import multer from "multer";
+
+// CORS Configuration
+export const corsMiddleware = cors({
+  origin: ["http://localhost:5173", "http://127.0.0.1:8000", "https://yourdomain.com"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type"],
+  credentials: false,
+});
+
+// JSON Parser with Limit
+export const jsonParser = express.json({ limit: "50mb" });
+
+// Cookie Parser
+export const cookieParserMiddleware = cookieParser();
+
+// Multer Configuration for File Uploads
+export const uploadMiddleware = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+      "application/pdf",
+    ];
+    if (allowedTypes.includes(file.mimetype)) cb(null, true);
+    else cb(new Error("InvalidFileType"));
   },
 });
 
-// File type filter (optional, e.g., only images)
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
-  if (extname && mimetype) {
-    cb(null, true);
-  } else {
-    cb("Error: Images only!");
-  }
-};
 
-const upload = multer({ storage, fileFilter });
-export default upload;
