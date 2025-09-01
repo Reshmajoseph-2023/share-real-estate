@@ -48,12 +48,14 @@ export const register = asyncHandler(async (req, res) => {
   }
 });
 
+
+//Login User
 export const loginUser = asyncHandler(async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     const user = await prisma.user.findUnique({
-      where: { username },
+      where: { email },
     });
 
     if (!user) {

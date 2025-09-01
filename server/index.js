@@ -7,7 +7,7 @@ import { getListFiles,uploadFile} from './controllers/s3Controller.js';
 import { corsMiddleware, jsonParser, cookieParserMiddleware,uploadMiddleware } from "./middleware/UploadMiddleware.js";
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8001;
 // Validate environment variables
 if (
   !process.env.AWS_REGION ||

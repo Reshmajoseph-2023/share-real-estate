@@ -20,7 +20,7 @@ model User {
   role             Role       
   alreadyRequested Json[]
   bookmarkedPropertiesID String[] @db.ObjectId
-  homes            Residency[] @relation("UserResidencies")
+  homes            Residency[] @relation("UserProperties")
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
@@ -36,7 +36,7 @@ model Residency {
   image       String
   facilities  Json
   ownerId     String   @db.ObjectId
-  owner       User?     @relation("UserResidencies", fields: [ownerId], references: [id])
+  owner       User?     @relation("UserProperties", fields: [ownerId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
