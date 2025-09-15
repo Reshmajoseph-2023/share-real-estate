@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Login.css";
+import UserDetailContext from "../../context/UserDetailContext";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [data, setData] = useState({ identifier: "", password: "" }); // identifier = email or username
+  const { setUserDetails } = useContext(UserDetailContext);
+
+  const [data, setData] = useState({ identifier: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
@@ -25,24 +28,38 @@ export default function Login() {
       return;
     }
 
-    // Backend accepts either email or username; send the right key
     const payload = data.identifier.includes("@")
       ? { email: data.identifier.trim(), password: data.password }
       : { username: data.identifier.trim(), password: data.password };
 
     try {
       setLoading(true);
+
+      // EXPECT: { token, user: { email } }
       const res = await axios.post(`${API_BASE}/api/auth/login`, payload, {
         headers: { "Content-Type": "application/json" },
       });
 
-      if (res.data?.token) {
-          console.log("Session token:", res.data.token);
-        localStorage.setItem("token", res.data.token);
-              navigate("/properties");
-      } else {
+      const token = res.data?.token ?? res.data?.data?.token ?? null;
+      const email = res.data?.user?.email ?? res.data?.data?.user?.email ?? null;
+
+      if (!token) {
         setErr(res.data?.message || "Login failed.");
+        return;
       }
+
+      // Persist so it survives reloads
+      localStorage.setItem("token", token);
+      if (email) localStorage.setItem("user", JSON.stringify({ email }));
+
+      // Put into context so components (BookingModal) can use immediately
+      setUserDetails((prev) => ({
+        ...prev,
+        token,
+        email: email || prev.email || null,
+      }));
+
+      navigate("/properties");
     } catch (error) {
       const msg =
         error.response?.data?.message ||
@@ -57,9 +74,7 @@ export default function Login() {
   return (
     <div className="login">
       <form onSubmit={onLoginSubmit} className="login-container">
-        <div className="login-title">
-          <h2>Login</h2>
-        </div>
+        <div className="login-title"><h2>Login</h2></div>
 
         <div className="login-inputs">
           <input

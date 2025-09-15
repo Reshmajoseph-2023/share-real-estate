@@ -1,30 +1,21 @@
 import jwt from "jsonwebtoken";
 
-export const verifyToken=(req,res,next)=>{
+export function verifyToken(req, res, next) {
+  if (req.method === "OPTIONS") return res.sendStatus(200);
 
-let token;
-let authHeader=req.headers.Authorization || req.headers.authorization;
-if(authHeader && authHeader.startsWith("Bearer")) {
-token=authHeader.split(" ")[1];     //0 index bearer ,index 1 token value
+  const header = req.headers.authorization || "";
+  const [scheme, token] = header.split(" ");
 
-if(!token)
-{
-  return res.status(401).json({message:"No token,authorization denied"});
+  if (scheme !== "Bearer" || !token) {
+    return res.status(401).json({ message: "Missing or invalid Authorization header" });
+  }
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    // payload has id, maybe email; don't rely on email here
+    req.user = { id: payload.id, email: payload.email ?? null, role: payload.role };
+    next();
+  } catch (e) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
 }
-
-try {
-const decode=jwt.verify(token,process.env.JWT_SECRET)
-req.user=decode;
-console.log("The decoded user is",req.user);
-next();
-}catch(err)
-{
-  res.status(400).json({message:"Token is not valid"});
-}
-}else 
-  {
-    return res.status(401).json({ message: "No token, authorization denied" });
-  
-}
-
-};

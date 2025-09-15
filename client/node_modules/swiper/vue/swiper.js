@@ -335,10 +335,6 @@ const Swiper = {
       type: String,
       default: undefined
     },
-    lazyPreloadPrevNext: {
-      type: Number,
-      default: undefined
-    },
     runCallbacksOnInit: {
       type: Boolean,
       default: undefined

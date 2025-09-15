@@ -1,6 +1,6 @@
 /* eslint no-param-reassign: "off" */
 import { getDocument } from 'ssr-window';
-import { extend, deleteProps, createElement, elementChildren, elementStyle, elementIndex } from '../shared/utils.js';
+import { extend, now, deleteProps, createElement, elementChildren, elementStyle, elementIndex } from '../shared/utils.js';
 import { getSupport } from '../shared/get-support.js';
 import { getDevice } from '../shared/get-device.js';
 import { getBrowser } from '../shared/get-browser.js';
@@ -19,7 +19,7 @@ import classes from './classes/index.js';
 import checkOverflow from './check-overflow/index.js';
 import defaults from './defaults.js';
 import moduleExtendParams from './moduleExtendParams.js';
-import { processLazyPreloader, preload } from '../shared/process-lazy-preloader.js';
+import { processLazyPreloader } from '../shared/process-lazy-preloader.js';
 const prototypes = {
   eventsEmitter,
   update,
@@ -134,11 +134,6 @@ class Swiper {
       progress: 0,
       velocity: 0,
       animating: false,
-      cssOverflowAdjustment() {
-        // Returns 0 unless `translate` is > 2**23
-        // Should be subtracted from css values to prevent overflow
-        return Math.trunc(this.translate / 2 ** 23) * 2 ** 23;
-      },
       // Locks
       allowSlideNext: swiper.params.allowSlideNext,
       allowSlidePrev: swiper.params.allowSlidePrev,
@@ -155,7 +150,7 @@ class Swiper {
         // Form elements to match
         focusableElements: swiper.params.focusableElements,
         // Last click time
-        lastClickTime: 0,
+        lastClickTime: now(),
         clickTimeout: undefined,
         // Velocities
         velocities: [],
@@ -278,7 +273,7 @@ class Swiper {
     } = swiper;
     let spv = 1;
     if (params.centeredSlides) {
-      let slideSize = slides[activeIndex] ? slides[activeIndex].swiperSlideSize : 0;
+      let slideSize = slides[activeIndex].swiperSlideSize;
       let breakLoop;
       for (let i = activeIndex + 1; i < slides.length; i += 1) {
         if (slides[i] && !breakLoop) {
@@ -343,15 +338,14 @@ class Swiper {
       swiper.updateSlidesClasses();
     }
     let translated;
-    if (params.freeMode && params.freeMode.enabled && !params.cssMode) {
+    if (swiper.params.freeMode && swiper.params.freeMode.enabled) {
       setTranslate();
-      if (params.autoHeight) {
+      if (swiper.params.autoHeight) {
         swiper.updateAutoHeight();
       }
     } else {
-      if ((params.slidesPerView === 'auto' || params.slidesPerView > 1) && swiper.isEnd && !params.centeredSlides) {
-        const slides = swiper.virtual && params.virtual.enabled ? swiper.virtual.slides : swiper.slides;
-        translated = swiper.slideTo(slides.length - 1, 0, false, true);
+      if ((swiper.params.slidesPerView === 'auto' || swiper.params.slidesPerView > 1) && swiper.isEnd && !swiper.params.centeredSlides) {
+        translated = swiper.slideTo(swiper.slides.length - 1, 0, false, true);
       } else {
         translated = swiper.slideTo(swiper.activeIndex, 0, false, true);
       }
@@ -503,11 +497,9 @@ class Swiper {
         });
       }
     });
-    preload(swiper);
 
     // Init Flag
     swiper.initialized = true;
-    preload(swiper);
 
     // Emit
     swiper.emit('init');

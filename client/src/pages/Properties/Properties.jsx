@@ -3,6 +3,7 @@ import "./Properties.css";
 import useProperties from "../../hooks/useProperties";
 import { PuffLoader } from "react-spinners";
 import PropertyCard from "../../components/PropertyCard/PropertyCard";
+import UserDetailContext from "../../context/UserDetailContext.js";
 //import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
 const Properties = () => {
   const { data, isError, isLoading } = useProperties();
@@ -14,7 +15,7 @@ const Properties = () => {
       </div>
     );
   }
-
+  
   if (isLoading) {
     return (
       <div className="wrapper flexCenter" style={{ height: "60vh" }}>

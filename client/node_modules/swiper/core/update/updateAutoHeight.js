@@ -11,7 +11,7 @@ export default function updateAutoHeight(speed) {
   }
   const getSlideByIndex = index => {
     if (isVirtual) {
-      return swiper.slides[swiper.getSlideIndexByData(index)];
+      return swiper.getSlideIndexByData(index);
     }
     return swiper.slides[index];
   };

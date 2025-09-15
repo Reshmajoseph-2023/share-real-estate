@@ -1,14 +1,8 @@
-
-
-export const authorizeRoles= (...allowedRoles) => {
-return(req,res,next) => {
-    if(!allowedRoles.includes(req.user.role))
-    {
-        return res.status(403).json({message:"Access denied"});
+export const authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user?.role || !roles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Forbidden" });
     }
     next();
+  };
 };
-};
-
-
-

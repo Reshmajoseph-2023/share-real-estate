@@ -37,7 +37,7 @@ const modulesParamsList = [
   'zoom',
 ];
 
-function getParams(element, propName, propValue) {
+function getParams(element) {
   const params = {};
   const passedParams = {};
   extend(params, defaults);
@@ -55,18 +55,14 @@ function getParams(element, propName, propValue) {
   });
 
   // Attributes
-  const attrsList = [...element.attributes];
-  if (typeof propName === 'string' && typeof propValue !== 'undefined') {
-    attrsList.push({ name: propName, value: propValue });
-  }
-  attrsList.forEach((attr) => {
+  [...element.attributes].forEach((attr) => {
     const moduleParam = modulesParamsList.filter(
       (mParam) => attr.name.indexOf(`${mParam}-`) === 0,
     )[0];
     if (moduleParam) {
       const parentObjName = attrToProp(moduleParam);
       const subObjName = attrToProp(attr.name.split(`${moduleParam}-`)[1]);
-      if (typeof passedParams[parentObjName] === 'undefined') passedParams[parentObjName] = {};
+      if (!passedParams[parentObjName]) passedParams[parentObjName] = {};
       if (passedParams[parentObjName] === true) {
         passedParams[parentObjName] = { enabled: true };
       }
@@ -115,6 +111,7 @@ function getParams(element, propName, propValue) {
   } else if (params.pagination === false) {
     delete params.pagination;
   }
+
   return { params, passedParams };
 }
 

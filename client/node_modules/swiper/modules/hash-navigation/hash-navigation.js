@@ -13,38 +13,28 @@ export default function HashNavigation({
     hashNavigation: {
       enabled: false,
       replaceState: false,
-      watchState: false,
-      getSlideIndex(_s, hash) {
-        if (swiper.virtual && swiper.params.virtual.enabled) {
-          const slideWithHash = swiper.slides.filter(slideEl => slideEl.getAttribute('data-hash') === hash)[0];
-          if (!slideWithHash) return 0;
-          const index = parseInt(slideWithHash.getAttribute('data-swiper-slide-index'), 10);
-          return index;
-        }
-        return swiper.getSlideIndex(elementChildren(swiper.slidesEl, `.${swiper.params.slideClass}[data-hash="${hash}"], swiper-slide[data-hash="${hash}"]`)[0]);
-      }
+      watchState: false
     }
   });
   const onHashChange = () => {
     emit('hashChange');
     const newHash = document.location.hash.replace('#', '');
-    const activeSlideEl = swiper.virtual && swiper.params.virtual.enabled ? swiper.slidesEl.querySelector(`[data-swiper-slide-index="${swiper.activeIndex}"]`) : swiper.slides[swiper.activeIndex];
-    const activeSlideHash = activeSlideEl ? activeSlideEl.getAttribute('data-hash') : '';
+    const activeSlideHash = swiper.slides[swiper.activeIndex].getAttribute('data-hash');
     if (newHash !== activeSlideHash) {
-      const newIndex = swiper.params.hashNavigation.getSlideIndex(swiper, newHash);
-      if (typeof newIndex === 'undefined' || Number.isNaN(newIndex)) return;
+      const newIndex = swiper.getSlideIndex(elementChildren(swiper.slidesEl, `.${swiper.params.slideClass}[data-hash="${newHash}"], swiper-slide[data-hash="${newHash}"]`)[0]);
+      if (typeof newIndex === 'undefined') return;
       swiper.slideTo(newIndex);
     }
   };
   const setHash = () => {
     if (!initialized || !swiper.params.hashNavigation.enabled) return;
-    const activeSlideEl = swiper.virtual && swiper.params.virtual.enabled ? swiper.slidesEl.querySelector(`[data-swiper-slide-index="${swiper.activeIndex}"]`) : swiper.slides[swiper.activeIndex];
-    const activeSlideHash = activeSlideEl ? activeSlideEl.getAttribute('data-hash') || activeSlideEl.getAttribute('data-history') : '';
     if (swiper.params.hashNavigation.replaceState && window.history && window.history.replaceState) {
-      window.history.replaceState(null, null, `#${activeSlideHash}` || '');
+      window.history.replaceState(null, null, `#${swiper.slides[swiper.activeIndex].getAttribute('data-hash')}` || '');
       emit('hashSet');
     } else {
-      document.location.hash = activeSlideHash || '';
+      const slide = swiper.slides[swiper.activeIndex];
+      const hash = slide.getAttribute('data-hash') || slide.getAttribute('data-history');
+      document.location.hash = hash || '';
       emit('hashSet');
     }
   };
@@ -54,8 +44,14 @@ export default function HashNavigation({
     const hash = document.location.hash.replace('#', '');
     if (hash) {
       const speed = 0;
-      const index = swiper.params.hashNavigation.getSlideIndex(swiper, hash);
-      swiper.slideTo(index || 0, speed, swiper.params.runCallbacksOnInit, true);
+      for (let i = 0, length = swiper.slides.length; i < length; i += 1) {
+        const slide = swiper.slides[i];
+        const slideHash = slide.getAttribute('data-hash') || slide.getAttribute('data-history');
+        if (slideHash === hash) {
+          const index = swiper.getSlideIndex(slide);
+          swiper.slideTo(index, speed, swiper.params.runCallbacksOnInit, true);
+        }
+      }
     }
     if (swiper.params.hashNavigation.watchState) {
       window.addEventListener('hashchange', onHashChange);

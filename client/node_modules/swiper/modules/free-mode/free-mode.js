@@ -18,7 +18,6 @@ export default function freeMode({
     }
   });
   function onTouchStart() {
-    if (swiper.params.cssMode) return;
     const translate = swiper.getTranslate();
     swiper.setTranslate(translate);
     swiper.setTransition(0);
@@ -28,7 +27,6 @@ export default function freeMode({
     });
   }
   function onTouchMove() {
-    if (swiper.params.cssMode) return;
     const {
       touchEventsData: data,
       touches
@@ -48,7 +46,6 @@ export default function freeMode({
   function onTouchEnd({
     currentPos
   }) {
-    if (swiper.params.cssMode) return;
     const {
       params,
       wrapperEl,

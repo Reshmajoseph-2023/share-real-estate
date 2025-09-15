@@ -1,3 +1,4 @@
+let timeout;
 export default function onResize() {
   const swiper = this;
   const {
@@ -36,8 +37,8 @@ export default function onResize() {
     }
   }
   if (swiper.autoplay && swiper.autoplay.running && swiper.autoplay.paused) {
-    clearTimeout(swiper.autoplay.resizeTimeout);
-    swiper.autoplay.resizeTimeout = setTimeout(() => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
       if (swiper.autoplay && swiper.autoplay.running && swiper.autoplay.paused) {
         swiper.autoplay.resume();
       }

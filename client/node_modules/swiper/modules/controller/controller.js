@@ -56,8 +56,11 @@ export default function Controller({
     };
     return this;
   }
+  // xxx: for now i will just save one spline function to to
   function getInterpolateFunction(c) {
-    swiper.controller.spline = swiper.params.loop ? new LinearSpline(swiper.slidesGrid, c.slidesGrid) : new LinearSpline(swiper.snapGrid, c.snapGrid);
+    if (!swiper.controller.spline) {
+      swiper.controller.spline = swiper.params.loop ? new LinearSpline(swiper.slidesGrid, c.slidesGrid) : new LinearSpline(swiper.snapGrid, c.snapGrid);
+    }
   }
   function setTranslate(_t, byController) {
     const controlled = swiper.controller.control;
@@ -65,8 +68,6 @@ export default function Controller({
     let controlledTranslate;
     const Swiper = swiper.constructor;
     function setControlledTranslate(c) {
-      if (c.destroyed) return;
-
       // this will create an Interpolate function based on the snapGrids
       // x is the Grid of the scrolled scroller and y will be the controlled scroller
       // it makes sense to create this only once and recall it for the interpolation
@@ -80,9 +81,6 @@ export default function Controller({
       }
       if (!controlledTranslate || swiper.params.controller.by === 'container') {
         multiplier = (c.maxTranslate() - c.minTranslate()) / (swiper.maxTranslate() - swiper.minTranslate());
-        if (Number.isNaN(multiplier) || !Number.isFinite(multiplier)) {
-          multiplier = 1;
-        }
         controlledTranslate = (translate - swiper.minTranslate()) * multiplier + c.minTranslate();
       }
       if (swiper.params.controller.inverse) {
@@ -108,7 +106,6 @@ export default function Controller({
     const controlled = swiper.controller.control;
     let i;
     function setControlledTransition(c) {
-      if (c.destroyed) return;
       c.setTransition(duration, swiper);
       if (duration !== 0) {
         c.transitionStart();
@@ -169,11 +166,11 @@ export default function Controller({
     removeSpline();
   });
   on('setTranslate', (_s, translate, byController) => {
-    if (!swiper.controller.control || swiper.controller.control.destroyed) return;
+    if (!swiper.controller.control) return;
     swiper.controller.setTranslate(translate, byController);
   });
   on('setTransition', (_s, duration, byController) => {
-    if (!swiper.controller.control || swiper.controller.control.destroyed) return;
+    if (!swiper.controller.control) return;
     swiper.controller.setTransition(duration, byController);
   });
   Object.assign(swiper.controller, {
