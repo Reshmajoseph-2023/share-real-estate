@@ -13,6 +13,7 @@ import BookingModal from "../../components/BookingModal/BookingModal";
 import UserDetailContext from "../../context/UserDetailContext.js";
 import { toast } from "react-toastify";
 import { Button } from "@mantine/core";
+import Heart from "../../components/Heart/Heart";
 
 
 const Property = () => {
@@ -59,7 +60,8 @@ const Property = () => {
     <div className="wrapper">
       <div className="flexColStart paddings innerWidth property-container">
         <div className="like">
-          <AiFillHeart size={24} color="white" />
+        
+        <Heart id={id} />
         </div>
 
         <img src={data.image} alt="home image" />

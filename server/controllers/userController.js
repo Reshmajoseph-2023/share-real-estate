@@ -175,7 +175,7 @@ export const Bookmark = asyncHandler(async (req, res) => {
 });
 
 // GET /api/user/allFav  (token required)
-export const getAllBookmarked = asyncHandler(async (req, res) => {
+export const AllBookmarked = asyncHandler(async (req, res) => {
   if (!req.user?.id) return res.status(401).json({ message: "Unauthenticated" });
 
   const user = await prisma.user.findUnique({
@@ -184,5 +184,5 @@ export const getAllBookmarked = asyncHandler(async (req, res) => {
   });
   if (!user) return res.status(404).json({ message: "User not found" });
 
-  return res.status(200).json(asArray(user.bookmarkedPropertiesID));
+  return res.status(200).json(asArray(user.bookmarked));
 });

@@ -6,15 +6,24 @@ import useHeaderColor from "../../hooks/useHeaderColor";
 import OutsideClickHandler from "react-outside-click-handler";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import ProfileMenu from "../ProfileMenu/ProfileMenu";
-import { useAuth0 } from "@auth0/auth0-react";
+import AddPropertyModal from "../AddPropertyModal/AddPropertyModal";
+import useAuthCheck from "../../hooks/useAuthCheck";
 
 
 const Header = () => {
   const [menuOpened, setMenuOpened] = useState(false);
-  //const { loginWithRedirect, isAuthenticated, user, logout } = useAuth0();
+ const [modalOpened, setModalOpened] = useState(false);
   const headerColor = useHeaderColor();
   const isLoggedIn = !!localStorage.getItem("token");
   const navigate = useNavigate();
+
+  const { validateLogin } = useAuthCheck();
+  const handleAddPropertyClick = () => {
+    if (validateLogin()) {
+      setModalOpened(true);
+    }
+  };
+
 
   return (
     <section className="h-wrapper" style={{ background: headerColor }}>
@@ -29,6 +38,13 @@ const Header = () => {
           <div className="flexCenter h-menu" style={getMenuStyles(menuOpened)}>
             <NavLink to="/properties">Properties</NavLink>
             <a href="mailto:rj287@students.waikato.ac.nz">Contact</a>
+
+            {/*add property*/}
+            <div onClick={handleAddPropertyClick}>Add property</div>
+            <AddPropertyModal opened={modalOpened} setOpened={setModalOpened}/>
+
+
+
 
             {/* login button */}
 

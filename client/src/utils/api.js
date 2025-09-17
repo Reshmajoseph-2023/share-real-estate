@@ -9,6 +9,15 @@ export const api = axios.create({
   // withCredentials: true, // uncomment if you use cookies/JWT in cookies
 });
 
+const showError = (err, fallback = "Something went wrong") => {
+  const msg =
+    err?.response?.data?.message ||
+    err?.response?.data?.error ||
+    err?.message ||
+    fallback;
+  toast.error(msg, { position: "bottom-right" });
+  return msg;
+};
 export const getAllProperties = async () => {
   try {
     const res = await api.get("/property/allproperties");
@@ -90,7 +99,7 @@ export const bookVisit = async (date, propertyId, token) => {
 export const getAllBookings = async (email, token) => {
   if (!token || !email) return [];
   const res = await api.get(
-    "/api/user/allBookings",
+    "/user/allBookings",
     { email },
     { headers: { Authorization: `Bearer ${token}` } }
   );
@@ -104,7 +113,7 @@ export async function removeBooking(id, token) {
   try {
     const { data } = await api.post(
       `/user/removeBooking/${id}`,
-      {}, // no body needed
+      {}, 
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -120,6 +129,52 @@ export async function removeBooking(id, token) {
   }
 }
 
+export const toFav = async (id, token) => {
+  // Toggle favourite for a residency id
+  try {
+    const { data } = await api.post(
+      `/user/toFav/${id}`,
+      {},
+      { 
+        headers: {
+        Authorization: `Bearer ${token}`, 
+        },
+  }
+);
+    return data;
+  } catch (err) {
+    showError(err, "Could not update favourites");
+    throw err;
+  }
+}
+
+export const AllBookmarked = async (token) => {
+  if (!token) return [];
+
+  try {
+    const { data } = await api.post(
+      `/user/allFav`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Normalize response shape
+    if (Array.isArray(data?.bookmarkedPropertiesID)) {
+      return data.bookmarkedPropertiesID;
+    }
+    if (Array.isArray(data?.bookmarks)) {
+      return data.bookmarks;
+    }
+    if (Array.isArray(data)) {
+      return data;
+    }
+
+    return [];
+  } catch (err) {
+    toast.error("Something went wrong while fetching favourites");
+    throw err;
+  }
+};
 
 
 
@@ -138,3 +193,4 @@ export async function removeBooking(id, token) {
 
 //yarn add @auth0/auth0-react@v2.0.1
 //yarn add dayjs to get date in particluar format
+//state of fav is not remaining in all pages for that use useEffect
