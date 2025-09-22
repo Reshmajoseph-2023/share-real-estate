@@ -20,6 +20,7 @@ const Property = () => {
   const { pathname } = useLocation();
   const id = pathname.split("/").slice(-1)[0];
 
+
   const { data, isLoading, isError } = useQuery(["resd", id], () => getProperty(id));
   const [modalOpened, setModalOpened] = useState(false);
   const { validateLogin } = useAuthCheck();
@@ -62,6 +63,7 @@ const Property = () => {
         <div className="like">
         
         <Heart id={id} />
+        
         </div>
 
         <img src={data.image} alt="home image" />
@@ -131,6 +133,7 @@ const Property = () => {
             {/* No email prop needed */}
             <BookingModal opened={modalOpened} setOpened={setModalOpened} propertyId={id}  />
           </div>
+
 
           <div className="map">
             <Map address={data.address} city={data.city} country={data.country}  />

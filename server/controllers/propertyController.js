@@ -13,7 +13,7 @@ export const createProperty = asyncHandler(async (req, res) => {
     country,
     image,
     facilities,
-  } = req.body;
+  } = req.body.data;
 
   const userId = req.user.id;
   //const  {id }=req.params;

@@ -176,6 +176,30 @@ export const AllBookmarked = async (token) => {
   }
 };
 
+export const createResidency= async (data, token) => {
+try {
+const res=await api.post(
+  '/property/create',
+  {
+    data
+  },
+  {
+    headers:{
+      Authorization: `Bearer ${token}`, 
+    },
+  }
+)
+}
+catch(error)
+{
+
+  throw error
+}
+
+}
+
+
+
 
 
 
