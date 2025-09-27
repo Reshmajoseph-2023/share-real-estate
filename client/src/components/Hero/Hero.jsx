@@ -9,7 +9,7 @@ const Hero = () => {
         {/* left side */}
         <div className="flexColStart hero-left">
           <div className="hero-title">
-            <div className="orange-circle" />
+
             <motion.h1
               initial={{ y: "2rem", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -18,9 +18,7 @@ const Hero = () => {
                 type: "ease-in",
               }}
             >
-              Search New Zealand's<br />
-              largest range of houses
-              <br /> and properties for sale
+              Search New Zealand's largest range of houses and properties for sale
             </motion.h1>
           </div>
           <div className="flexColStart secondaryText flexhero-des">
@@ -28,26 +26,16 @@ const Hero = () => {
             <span>Forget all difficulties in finding a properties for you</span>
           </div>
 
-          <SearchBar />
+
 
           <div className="flexCenter stats">
             <div className="flexColCenter stat">
 
             </div>
 
-            <div className="flexColCenter stat">
-              <span>
-                <CountUp start={1950} end={2000} duration={4} /> <span>+</span>
-              </span>
-              <span className="secondaryText">Happy Customer</span>
-            </div>
 
-            <div className="flexColCenter stat">
-              <span>
-                <CountUp end={28} /> <span>+</span>
-              </span>
-              <span className="secondaryText">Awards Winning</span>
-            </div>
+
+
           </div>
         </div>
 
@@ -60,13 +48,15 @@ const Hero = () => {
               duration: 2,
               type: "ease-in",
             }}
-            className="image-container"
+
           >
-            <img src="./hero-image.png" alt="houses" />
+
           </motion.div>
         </div>
+
       </div>
     </section>
+
   );
 };
 

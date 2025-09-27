@@ -19,8 +19,8 @@ const UploadImage = ({
     cloudinaryRef.current = window.cloudinary;
     widgetRef.current = cloudinaryRef.current.createUploadWidget(
       {
-        cloudName: "dcdhklrjc",
-        uploadPreset: "vx0dyjgc",
+        cloudName: "dyjx3ixp1",
+        uploadPreset: "Realestateapplication",
         maxFiles: 1,
       },
       (err, result) => {

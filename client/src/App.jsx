@@ -15,6 +15,7 @@ import Login from "./pages/Login/Login";
 import UserDetailContext from "./context/UserDetailContext";
 import Bookings from "./pages/Bookings/Bookings";
 import AllBookmarked from "./pages/Favourites/Favourites";
+import PropertiesAdded from "./pages/PropertiesAdded/PropertiesAdded";
 
 function App() {
   const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ function App() {
   const [userDetails, setUserDetails] = useState({
     favourites: [],
     bookings: [],
+    properties:[],
     token: null,
     email: null,
   });
@@ -33,6 +35,7 @@ function App() {
       const userStr = localStorage.getItem("user");
       const bookingsStr = localStorage.getItem("bookings"); // Load bookings
        const favouritesStr = localStorage.getItem("favourites"); 
+       const propertiesStr = localStorage.getItem("properties"); 
       const user = userStr ? JSON.parse(userStr) : null;
    
       setUserDetails((prev) => ({
@@ -41,6 +44,7 @@ function App() {
         email: user?.email || null,
         bookings: bookingsStr ? JSON.parse(bookingsStr) : [],
          favourites: favouritesStr ? JSON.parse(favouritesStr) : [], 
+         properties: propertiesStr ? JSON.parse(propertiesStr) : [],
       }));
     } catch (e) {
       console.warn("Failed to hydrate user or bookings", e);
@@ -78,6 +82,7 @@ useEffect(() => {
                 <Route path="/register" element={<Register />} />
                 <Route path="/bookings" element={<Bookings />} />
                 <Route path="/favourites" element={<AllBookmarked />} />
+                <Route path="/myproperties" element={<PropertiesAdded />} />
               </Route>
             </Routes>
           </Suspense>

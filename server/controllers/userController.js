@@ -70,23 +70,11 @@ export const bookVisit = asyncHandler(async (req, res) => {
   return res.status(200).json({ message: "Viewing booked successfully" });
 });
 
-// GET /api/user/allBookings  (token required)
-export const getAllBookings = asyncHandler(async (req, res) => {
-  const { email } = req.body;
-  try {
-    const bookings = await prisma.user.findUnique({
-      where: { email },
-      select: { alreadyRequested: true },
-    });
-    res.status(200).send(bookings);
-  } catch (err) {
-    throw new Error(err.message);
-  }
-});
+
 
 
 // POST /api/user/removeBooking/:id  (token required)
-// POST /api/user/removeBooking/:id  (token required)
+
 export const cancelBooking = asyncHandler(async (req, res) => {
   const propertyId = req.params.id;
 
@@ -185,4 +173,41 @@ export const AllBookmarked = asyncHandler(async (req, res) => {
   if (!user) return res.status(404).json({ message: "User not found" });
 
   return res.status(200).json(asArray(user.bookmarked));
+});
+
+// GET /api/user/allBookings  (token required)
+export const getAllBookings = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  try {
+    const bookings = await prisma.user.findUnique({
+      where: { email },
+      select: { alreadyRequested: true },
+    });
+    res.status(200).send(bookings);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+});
+
+// GET /api/user/properties  (token required)
+export const AllMyProperties = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const residencies = await prisma.residency.findMany({
+      where: {
+        ownerId: (await prisma.user.findUnique({
+          where: { email },
+          select: { id: true },
+        })).id
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    });
+
+    res.status(200).send(residencies);
+  } catch (err) {
+    throw new Error(err.message);
+  }
 });

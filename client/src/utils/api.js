@@ -108,6 +108,20 @@ export const getAllBookings = async (email, token) => {
 
 };
 
+
+// api.js
+export const AllMyProperties = async (email, token) => {
+  if (!token || !email) return [];
+  const res = await api.get(
+    "/user/properties",
+    { email },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+
+  return [];
+
+};
+
 // utils/api.ts
 export async function removeBooking(id, token) {
   try {
@@ -199,6 +213,18 @@ catch(error)
 }
 
 
+// Delete a property (Admins only)
+
+
+export async function deletePropertyById(id, token) {
+  if (!id) throw new Error("Property id is required");
+  if (!token) throw new Error("Missing auth token");
+
+  const res = await api.delete(`/property/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data; // e.g. { message: "Residency deleted successfully" }
+}
 
 
 
@@ -208,6 +234,16 @@ catch(error)
 
 
 
+
+// utils/api.ts
+
+
+export async function updatePropertyById(id, payload, token) {
+  const res = await api.put(`/property/${id}`, payload, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+  return res.data;
+}
 
 
 

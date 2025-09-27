@@ -8,6 +8,7 @@ import {
   cancelBooking,
   Bookmark,
   AllBookmarked,
+  AllMyProperties
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -25,6 +26,7 @@ router.get("/user", verifyToken, authorizeRoles("admin", "user"), (_req, res) =>
 // PROTECTED endpoints
 router.post("/bookVisit/:id", verifyToken, bookVisit); 
 router.get("/allBookings", verifyToken, getAllBookings);
+router.get("/properties", verifyToken, AllMyProperties);
 router.post("/removeBooking/:id", verifyToken, cancelBooking);
 router.post("/toFav/:rid", verifyToken, Bookmark);
 router.post("/allFav", verifyToken, AllBookmarked);
